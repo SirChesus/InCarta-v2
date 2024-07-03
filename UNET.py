@@ -26,7 +26,7 @@ class UNET(nn.Module):
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2,)
        
 
-        # down part (left hand of U)
+        # down part uNet
         for feature in features:
             self.downs.append(DoubleConv(in_channels, feature))
             in_channels = feature
@@ -57,7 +57,6 @@ class UNET(nn.Module):
         x = self.bottleneck(x)
         skip_connections = skip_connections[::-1]
 
-        # said prob better ways of doing this
         for index in range(0, len(self.ups), 2):
             x = self.ups[index](x)
             skip_connection = skip_connections[index//2]
