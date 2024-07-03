@@ -6,7 +6,7 @@ class DoubleConv(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(DoubleConv, self).__init__()
         self.conv = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, 3,1,1,bias=False),
+            nn.Conv2d(in_channels, out_channels, 3, 1, 1, bias=False),
             nn.BatchNorm2d(out_channels),
             nn.ReLU(inplace=True),
             nn.Conv2d(out_channels, out_channels, 3, 1, 1, bias=False),
@@ -14,37 +14,41 @@ class DoubleConv(nn.Module):
             nn.ReLU(inplace=True),
         )
 
-    def forwards(self,x):
+    def forward(self, x):
         return self.conv(x)
 
+
 class UNET(nn.Module):
-    def __init__(self, in_channels=3, out_channels=1, features=[64,128,256,512]):
+    def __init__(self, in_channels=3, out_channels=1, features=[64,128,256,512],):
         super(UNET, self).__init__()
         self.ups = nn.ModuleList()
         self.downs = nn.ModuleList()
-        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2,)
+       
 
-
-        # down part of uNET
+        # down part (left hand of U)
         for feature in features:
             self.downs.append(DoubleConv(in_channels, feature))
             in_channels = feature
 
-        # up part of uNET, bi-linear instead of transpose2d
+        # up part uNet
         for feature in reversed(features):
             self.ups.append(
+                # look into bi-linear rather than transpose2d, for improved eff.
                 nn.ConvTranspose2d(
                     feature*2, feature, kernel_size=2, stride=2
                 )
             )
             self.ups.append(DoubleConv(feature*2, feature))
 
+        # bottleneck (bottom end straight path): SPECIAL CASE
         self.bottleneck = DoubleConv(features[-1], features[-1]*2)
+
+        # final conv. (3rd movement left): SPECIAL CASE
         self.final_conv = nn.Conv2d(features[0], out_channels, kernel_size=1)
 
-    def forward(self,x):
+    def forward(self, x):
         skip_connections = []
-
         for down in self.downs:
             x = down(x)
             skip_connections.append(x)
@@ -53,20 +57,21 @@ class UNET(nn.Module):
         x = self.bottleneck(x)
         skip_connections = skip_connections[::-1]
 
-        for idx in range(0, len(self.ups),2):
-            x = self.ups[idx](x)
-            skip_connection = skip_connections[idx//2]
+        # said prob better ways of doing this
+        for index in range(0, len(self.ups), 2):
+            x = self.ups[index](x)
+            skip_connection = skip_connections[index//2]
 
-            # checks for case where output different size than inputs
             if x.shape != skip_connection.shape:
+                # resizing output to match dimensions of input image
                 x = tf.resize(x, size=skip_connection.shape[2:])
 
-            concat_skip = torch.cat((skip_connection,x), dim=1)
-            x = self.ups[idx+1](concat_skip)
+            concat_skip = torch.cat((skip_connection, x), dim=1)
+            x = self.ups[index+1](concat_skip)
 
         return self.final_conv(x)
 
-# some difference here, this was my test function try to find what is wrong
+# testing code, now works yay
 def test():
     x = torch.randn((3,1,160,160))
     model = UNET(in_channels=1, out_channels=1)
