@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-import torchvision.transforms as tf
+import torchvision.transforms.functional as tf
 
 class DoubleConv(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -73,7 +73,7 @@ class UNET(nn.Module):
         return self.final_conv(x)
 
 def test():
-    x = torch.randn((3,1,160,160))
+    x = torch.randn((3,1,161,161))
     model = UNET(in_channels=1, out_channels=1)
     preds = model(x)
     print(preds.shape)

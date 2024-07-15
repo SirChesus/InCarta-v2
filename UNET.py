@@ -75,4 +75,4 @@ def test():
     print(x.shape)
     assert preds.shape == x.shape
 
-test()
+#test()
