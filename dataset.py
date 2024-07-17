@@ -26,8 +26,8 @@ class CarvanaDataset(Dataset):
         # checks if a transform was passed in, if so transform the images
         if self.transform is not None:
             augmentations = self.transform(image=image, mask=mask)
-            image = augmentations[image]
-            mask = augmentations[mask]
+            image = augmentations["image"]
+            mask = augmentations["mask"]
 
         return image, mask
 

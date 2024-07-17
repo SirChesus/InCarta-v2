@@ -4,7 +4,7 @@ from albumentations.pytorch import ToTensorV2
 from tqdm import tqdm  # no idea why but it fixes a later error
 import torch.nn as nn
 import torch.optim as optim
-from UNET import UNET
+from UNET_Kevin import UNET
 from utils import (
     load_checkpoint,
     save_checkpoint,

@@ -1,6 +1,8 @@
+"""
 import torch
 import torch.nn as nn
 import torchvision.transforms as tf
+
 
 class DoubleConv(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -76,3 +78,4 @@ def test():
     assert preds.shape == x.shape
 
 #test()
+"""
