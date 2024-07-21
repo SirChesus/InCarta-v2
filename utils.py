@@ -78,6 +78,8 @@ def check_accuracy(loader, model, device="cuda"):
         f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}"
     )
     print(f"Dice score: {dice_score/len(loader)}")
+
+    # switches the model back into training mode
     model.train()
     # better metrics for measuring accuracy, dice scores are one example **TODO**
     # look more into dice scores or any other form of measurement, and maybe allow it where you can customize which metric is used
@@ -85,14 +87,20 @@ def check_accuracy(loader, model, device="cuda"):
 
 def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda"):
     model.eval()
+    # for an index loop through images and masks of the loader
     for idx, (x, y) in enumerate(loader):
         x = x.to(device=device)
+
         with torch.no_grad():
+            # turning it into BW masks I believe
             preds = torch.sigmoid(model(x))
-            preds = (preds > 0.5).float()
+            preds = preds.float()
+        # saving the prediction to the inputted folder
         torchvision.utils.save_image(
             preds, f"{folder}/pred_{idx}.png"
         )
+
+        # saving the original image.
         torchvision.utils.save_image(y.unsqueeze(1), f"{folder}{idx}.png")
 
     model.train()

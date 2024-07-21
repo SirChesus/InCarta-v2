@@ -16,15 +16,15 @@ from utils import (
 #Hyperperameters
 learning_rate = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-BATCH_SIZE = 16
-NUM_EPOCHS = 3
+BATCH_SIZE = 32
+NUM_EPOCHS = 5
 NUM_WORKERS = 2
-IMAGE_HEIGHT = 132 # 1050
-IMAGE_WIDTH = 240 # 1914, different ratio then he used, may cause errors later
+IMAGE_HEIGHT = 33 # 1050, 132
+IMAGE_WIDTH = 60 # 1914, different ratio then he used, may cause errors later, 240
 PIN_MEMORY = True
 LOAD_MODEL = False
-TRAIN_IMG_DIR = "data/train_images/"
-TRAIN_MASK_DIR = "data/train_masks/"
+TRAIN_IMG_DIR = "small_data/train_images/"
+TRAIN_MASK_DIR = "small_data/train_masks/"
 VAL_IMG_DIR = "data/validation_images/"
 VAL_MASK_DIR = "data/validation_masks/"
 
@@ -101,21 +101,20 @@ def main():
     for epoch in range(NUM_EPOCHS):
         train_fn(train_loader, model, optimizer, loss_fn, scaler)
 
-        # save model
-        checkpoint = {
-            "state_dict": model.state_dict(),
-            "optimizer": optimizer.state_dict(),
-        }
-        save_checkpoint(checkpoint)
-
         # check accuracy
         check_accuracy(val_loader, model, device=DEVICE)
 
         # print some examples to a folder
         save_predictions_as_imgs(
-            val_loader, model, folder="saved_images/", device=DEVICE # still need to figure out the folder
+            val_loader, model, folder="output_images/", device=DEVICE
         )
 
+    # save the model after finishing training, could implement later where it saves after set # of epochs
+    checkpoint = {
+       "state_dict": model.state_dict(),
+       "optimizer": optimizer.state_dict(),
+    }
+    save_checkpoint(checkpoint)
 
 if __name__ == "__main__":
     main()
