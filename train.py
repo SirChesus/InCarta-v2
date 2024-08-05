@@ -16,17 +16,17 @@ from utils import (
 #Hyperperameters
 learning_rate = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-BATCH_SIZE = 32
-NUM_EPOCHS = 5
+BATCH_SIZE = 128
+NUM_EPOCHS = 10
 NUM_WORKERS = 2
-IMAGE_HEIGHT = 33 # 1050, 132
-IMAGE_WIDTH = 60 # 1914, different ratio then he used, may cause errors later, 240
+IMAGE_HEIGHT = 128
+IMAGE_WIDTH = 128
 PIN_MEMORY = True
 LOAD_MODEL = False
-TRAIN_IMG_DIR = "small_data/train_images/"
-TRAIN_MASK_DIR = "small_data/train_masks/"
-VAL_IMG_DIR = "data/validation_images/"
-VAL_MASK_DIR = "data/validation_masks/"
+TRAIN_IMG_DIR = "Lung Images\\train_images"
+TRAIN_MASK_DIR = "Lung Images\\train_masks"
+VAL_IMG_DIR = "Lung Images\\validation_images"
+VAL_MASK_DIR = "Lung Images\\validation_masks"
 
 
 # trains for one epoch, edit later to add more options if I want
