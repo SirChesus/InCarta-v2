@@ -36,6 +36,7 @@ def npy_to_png(npy_file, png_file, file_path, output_path, new_size=None):
 
 #npy_to_png('0001_NI000_slice000.npy', '0001_NI000_slice000.png', 'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\data2\\Image\\LIDC-IDRI-0001', 'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\data2\\PNG Image', (128,128))
 
+'''
 main_dir = 'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\Lung Images\\Original Data\\Mask'
 
 current_file = ''
@@ -54,3 +55,53 @@ for folder_path in os.listdir(main_dir):
         except Exception as e:
             print(e)
             print(file_name, output_name, folder_path, output_path)
+
+'''
+
+shape_file = "C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\shape_images\\test\\Circle\\Circle_0d9895c6-2a97-11ea-8123-8363a7ec19e6.png"
+
+def is_touching(image_array, target_color, x, y):
+
+    neighboring_pixels = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
+    height, width, _ = image_array.shape
+
+    for nx, ny in neighboring_pixels:
+        if 0 <= nx < width and 0 <= ny < height:  # Ensure neighbor is within bounds
+            if np.array_equal(image_array[ny, nx], target_color):
+                return True
+
+    return False
+
+def mask_converter(path):
+    image = Image.open(path)
+
+    background_color = image.getpixel((0,0))
+    pixel_list = np.array(image)
+    # looping through all pixels
+    #for pixel in range(len(pixel_list)):
+        #if pixel_list[pixel] == background_color:
+            #pixel_list[pixel] = (0, 0, 0)
+
+    whole_mask = np.all(pixel_list == background_color, axis=-1)
+    pixel_list[whole_mask] = [0, 0, 0]
+    new_list = np.array(pixel_list)
+
+    # Iterate through each pixel, feels like there should be much better way
+    height, width = whole_mask.shape
+    for y in range(height):
+        for x in range(width):
+            if not is_touching(pixel_list, [0, 0, 0], x, y):
+                new_list[y, x] = [0, 0, 0]
+
+    border_mask = np.all(new_list)
+
+
+    new_image = Image.fromarray(new_list)
+    #new_image.save('test_image', 'png')
+    new_image.show()
+    #image.show()
+
+
+
+
+mask_converter(shape_file)
