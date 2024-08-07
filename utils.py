@@ -2,6 +2,7 @@ import torch
 import torchvision
 from dataset import CarvanaDataset
 from torch.utils.data import DataLoader
+import numpy as np
 
 
 def save_checkpoint(state, filename="my_checkpoint.pth.tar"):
@@ -94,6 +95,7 @@ def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda
         with torch.no_grad():
             # turning it into BW masks I believe
             preds = torch.sigmoid(model(x))
+            preds = np.all(preds > 0.5, 255)
             preds = preds.float()
         # saving the prediction to the inputted folder
         torchvision.utils.save_image(

@@ -72,36 +72,66 @@ def is_touching(image_array, target_color, x, y):
 
     return False
 
-def mask_converter(path):
-    image = Image.open(path)
+# converts a shape into a mask and saves both the original image and mask to correct paths
+def mask_converter(image_path, path_to_mask_output, path_to_image_output, name):
+    image = Image.open(image_path)
 
+    # gets the top left pixel which will always be the background
     background_color = image.getpixel((0,0))
+    # creating a list of all the pixels in the image, using np arrays
     pixel_list = np.array(image)
-    # looping through all pixels
-    #for pixel in range(len(pixel_list)):
-        #if pixel_list[pixel] == background_color:
-            #pixel_list[pixel] = (0, 0, 0)
-
-    whole_mask = np.all(pixel_list == background_color, axis=-1)
-    pixel_list[whole_mask] = [0, 0, 0]
-    new_list = np.array(pixel_list)
+    # creating a copy so that when we do comparisons previous changes have no affect
+    border_mask = np.array(pixel_list)
 
     # Iterate through each pixel, feels like there should be much better way
-    height, width = whole_mask.shape
+    height, width,_ = pixel_list.shape
     for y in range(height):
         for x in range(width):
-            if not is_touching(pixel_list, [0, 0, 0], x, y):
-                new_list[y, x] = [0, 0, 0]
+            if not is_touching(pixel_list, background_color, x, y) or np.array_equal(pixel_list[y, x], background_color):
+                border_mask[y, x] = [0, 0, 0]
+            else:
+                border_mask[y, x] = [255, 255, 255]
+    #
+    new_image = Image.fromarray(border_mask)
+    new_image = new_image.convert("L")
+    new_image.save(f"{path_to_mask_output}/{name}.png", format="PNG")
 
-    border_mask = np.all(new_list)
+    for y in range(height):
+        for x in range(width):
+            if np.array_equal(pixel_list[y, x], background_color):
+                pixel_list[y, x] = [0, 0, 0]
+            else:
+                pixel_list[y, x] = [255,255,255]
+
+    pixel_list = Image.fromarray(pixel_list).convert('L')
+    pixel_list.save(f"{path_to_image_output}/{name}.png", "PNG")
+    #new_image.show()
 
 
-    new_image = Image.fromarray(new_list)
-    #new_image.save('test_image', 'png')
-    new_image.show()
-    #image.show()
+#mask_converter(shape_file,
+#               'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\shape_images\\masks\\train',
+#               'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\shape_images\\images\\train',
+#               'Testing_Circle')
 
 
+# converts a whole set of images and gives them names from 1-100
+def convert_all(directory, path_to_mask_output, path_to_image_output):
+    for folder_path in os.listdir(directory):
+        # numbering for the naming
+        x = 0
+        for image_name in os.listdir(f"{directory}\\{folder_path}"):
+            x += 1
+            name = f"{folder_path} {x}" # folder path has the name of the shape
+            image_path = f"{directory}\\{folder_path}\\{image_name}"
+            # using a try statement since too lazy to fix the format in the actual folders
+            try:
+                mask_converter(image_path, path_to_mask_output, path_to_image_output, name)
+            except:
+                pass
 
+# paths
+directory = 'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\shape_images\\test'
+path_to_mask = 'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\shape_images\\masks\\test'
+path_to_image = 'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\shape_images\\images\\test'
 
-mask_converter(shape_file)
+convert_all(directory, path_to_mask, path_to_image)
