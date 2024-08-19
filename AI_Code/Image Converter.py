@@ -58,7 +58,7 @@ for folder_path in os.listdir(main_dir):
 
 '''
 
-shape_file = "C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\shape_images\\test\\Circle\\Circle_0d9895c6-2a97-11ea-8123-8363a7ec19e6.png"
+shape_file = "/shape_images/test/Circle/Circle_0d9895c6-2a97-11ea-8123-8363a7ec19e6.png"
 
 def is_touching(image_array, target_color, x, y):
 
@@ -131,7 +131,7 @@ def convert_all(directory, path_to_mask_output, path_to_image_output):
 
 # paths
 directory = 'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\shape_images\\test'
-path_to_mask = 'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\shape_images\\masks\\test'
-path_to_image = 'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\shape_images\\images\\test'
+path_to_mask = '/shape_images/masks/test'
+path_to_image = '/shape_images/images/test'
 
 convert_all(directory, path_to_mask, path_to_image)
