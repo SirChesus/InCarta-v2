@@ -14,19 +14,23 @@ from utils import (
 )
 
 #Hyperperameters
-learning_rate = 1e-4
+learning_rate = 1e-3
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-BATCH_SIZE = 25
+BATCH_SIZE = 50
 NUM_EPOCHS = 2
 NUM_WORKERS = 2
-IMAGE_HEIGHT = 200
-IMAGE_WIDTH = 200
+IMAGE_HEIGHT = 50
+IMAGE_WIDTH = 50
 PIN_MEMORY = True
 LOAD_MODEL = False
-TRAIN_IMG_DIR = "../shape_images/images/train"
-TRAIN_MASK_DIR = "../shape_images/masks/train"
-VAL_IMG_DIR = "../shape_images/images/test"
-VAL_MASK_DIR = "../shape_images/masks/test"
+#TRAIN_IMG_DIR = "../shape_images/images/train"
+TRAIN_IMG_DIR = "../Unused_Training_Images/Lung_Images/train_images"
+#TRAIN_MASK_DIR = "../shape_images/masks/train"
+TRAIN_MASK_DIR = "../Unused_Training_Images/Lung_Images/train_masks"
+#VAL_IMG_DIR = "../shape_images/images/test"
+VAL_IMG_DIR = "../Unused_Training_Images/Lung_Images/validation_images"
+#VAL_MASK_DIR = "../shape_images/masks/test"
+VAL_MASK_DIR = "../Unused_Training_Images/Lung_Images/validation_masks"
 
 
 # trains for one epoch, edit later to add more options if I want
@@ -51,7 +55,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # update tqdm loop
         loop.set_postfix(loss=loss.item())
 
-def main():
+def train():
     # from albuementations video, from what I can tell just normalizing images
     train_transform = A.Compose(
         [
@@ -106,7 +110,7 @@ def main():
 
         # print some examples to a folder
         save_predictions_as_imgs(
-            val_loader, model, folder="output_images/", device=DEVICE
+            val_loader, model, folder="C:/Users/Test0/PycharmProjects/InCartaUNet-v2/output_images", device=DEVICE, epoch=epoch
         )
 
     # save the model after finishing training, could implement later where it saves after set # of epochs
@@ -117,4 +121,4 @@ def main():
     save_checkpoint(checkpoint)
 
 if __name__ == "__main__":
-    main()
+    train()

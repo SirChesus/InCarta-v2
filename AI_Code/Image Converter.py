@@ -34,30 +34,6 @@ def npy_to_png(npy_file, png_file, file_path, output_path, new_size=None):
     image.save(f"{output_path}/{png_file}", format='PNG')
 
 
-#npy_to_png('0001_NI000_slice000.npy', '0001_NI000_slice000.png', 'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\data2\\Image\\LIDC-IDRI-0001', 'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\data2\\PNG Image', (128,128))
-
-'''
-main_dir = 'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\Lung Images\\Original Data\\Mask'
-
-current_file = ''
-x = 0
-# loop through folders in the main directory (all the folders in image in this case)
-for folder_path in os.listdir(main_dir):
-    path_without_image_name = f"{main_dir}\\{folder_path}\\"
-    # loops through all the files within those folders, probably a more efficient way exists
-    for file_name in os.listdir(path_without_image_name):
-        output_path = 'C:\\Users\\Test0\\PycharmProjects\\InCartaUNet-v2\\Lung Images\\PNG Data\\PNG Masks'
-        x += 1
-        output_name = x.__str__() + '.png'
-        try:
-            npy_to_png(file_name, output_name, path_without_image_name, output_path, (512,512))
-
-        except Exception as e:
-            print(e)
-            print(file_name, output_name, folder_path, output_path)
-
-'''
-
 shape_file = "/shape_images/test/Circle/Circle_0d9895c6-2a97-11ea-8123-8363a7ec19e6.png"
 
 def is_touching(image_array, target_color, x, y):

@@ -2,6 +2,9 @@ import torch
 import torchvision
 from dataset import CarvanaDataset
 from torch.utils.data import DataLoader
+from os import path
+from os import makedirs
+
 import numpy as np
 
 
@@ -60,6 +63,7 @@ def get_loaders(
 def check_accuracy(loader, model, device="cuda"):
     num_correct = 0
     num_pixels = 0
+    num_wrong = 0
     dice_score = 0
     model.eval()
 
@@ -86,11 +90,14 @@ def check_accuracy(loader, model, device="cuda"):
     # look more into dice scores or any other form of measurement, and maybe allow it where you can customize which metric is used
 
 
-def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda"):
+def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda", epoch=1):
     model.eval()
     # for an index loop through images and masks of the loader
     for idx, (x, y) in enumerate(loader):
         x = x.to(device=device)
+
+        if not os.path.exists(newpath):
+            os.makedirs(newpath)
 
         with torch.no_grad():
             # turning it into BW masks I believe
@@ -99,10 +106,14 @@ def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda
             preds = preds.float()
         # saving the prediction to the inputted folder
         torchvision.utils.save_image(
-            preds, f"{folder}/pred_{idx}.png"
+            preds, f"{folder}/pred_{idx}_{epoch}.png"
         )
 
         # saving the original image.
-        torchvision.utils.save_image(y.unsqueeze(1), f"{folder}{idx}.png")
+        torchvision.utils.save_image(y.unsqueeze(1), f"{folder}/ground_truth_{idx}_{epoch}.png")
+        torchvision.utils.save_image(x, f"{folder}/og_image_{idx}_{epoch}.png")
+
+        overlayed_image = x + y
+        torchvision.utils.save_image(overlayed_image, f"{folder}/overlayed_image_{idx}_{epoch}.png")
 
     model.train()

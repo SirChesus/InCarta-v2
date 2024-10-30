@@ -28,28 +28,6 @@ class Screen:
         self.dimensions = dimensions
         self.window.geometry(f"{self.dimensions[0]}x{self.dimensions[1]}")
 
-    def add_object(self):
-        pass
-
-
-
-
-"""
-def create_widget(parent, widget_type, **options):
-    return widget_type(parent, **options)
-
-
-window = create_widget(None, tk.Tk)
-window.title("GUI Example")
-
-
-frame = create_widget(window, tk.Frame, bg='lightblue', bd=3, cursor='hand2', height=1000,
-                      highlightcolor='red', highlightthickness=2, highlightbackground='black',
-                      relief=tk.RAISED, width=)
-
-frame.pack(padx=20, pady=20)
-
-# Run the Tkinter event loop
-window.mainloop()
-
-"""
+    def add_object(self, input_object):
+        self.objects.__add__(input_object)
+        
