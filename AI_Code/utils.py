@@ -111,7 +111,7 @@ def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda
             preds = preds.float()
         # saving the prediction to the inputted folder
         torchvision.utils.save_image(
-            preds, f"{folder}/{idx}_pred_{epoch}.png"
+            preds, f"{folder}/{idx} - pred_{epoch}.png"
         )
 
         # saving the original image.
