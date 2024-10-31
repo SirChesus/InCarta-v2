@@ -92,12 +92,17 @@ def check_accuracy(loader, model, device="cuda"):
 
 def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda", epoch=1):
     model.eval()
+
+    # making folder for the epoch
+    if not path.exists(f"{folder}/epoch_{epoch}"):
+        makedirs(f"{folder}/epoch_{epoch}")
+
+    # setting folder to be the new path w/ the corresponding epoch
+    folder = f"{folder}/epoch_{epoch}"
+
     # for an index loop through images and masks of the loader
     for idx, (x, y) in enumerate(loader):
         x = x.to(device=device)
-
-        if not os.path.exists(newpath):
-            os.makedirs(newpath)
 
         with torch.no_grad():
             # turning it into BW masks I believe
@@ -106,14 +111,14 @@ def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda
             preds = preds.float()
         # saving the prediction to the inputted folder
         torchvision.utils.save_image(
-            preds, f"{folder}/pred_{idx}_{epoch}.png"
+            preds, f"{folder}/{idx}_pred_{epoch}.png"
         )
 
         # saving the original image.
-        torchvision.utils.save_image(y.unsqueeze(1), f"{folder}/ground_truth_{idx}_{epoch}.png")
-        torchvision.utils.save_image(x, f"{folder}/og_image_{idx}_{epoch}.png")
+        torchvision.utils.save_image(y.unsqueeze(1), f"{folder}/ {idx} - ground_truth.png")
+        torchvision.utils.save_image(x, f"{folder}/ {idx} - og_image.png")
 
-        overlayed_image = x + y
-        torchvision.utils.save_image(overlayed_image, f"{folder}/overlayed_image_{idx}_{epoch}.png")
+        overlayed_image = x + y.unsqueeze(1)
+        torchvision.utils.save_image(overlayed_image, f"{folder}/ {idx} - overlayed_image.png")
 
     model.train()
