@@ -1,20 +1,24 @@
-import Screen as s
 import tkinter as tk
+# only works on windows, need to change compatibility
+from ctypes import windll
+from os import path
 
+comp_dim = windll.user32.GetSystemMetrics
 
 def change_size(event, window):
     return window.change_dimensions_float(1.2)
 
 def start_window():
-    root = tk.Tk()
+    root.configure(bg='gray')
 
-    testing_window = s.Screen(root, "title")
-
-
-
-    root.bind('<KeyPress>', change_size)
-
-    tk.mainloop()
 
 if __name__ == "__main__":
+    root = tk.Tk()
+    # creating the geometry based on the dimensions of the persons computer
+    root.geometry(f"{int(comp_dim(0)/1.1)}x{int(comp_dim(1)/1.1)}")
+
     start_window()
+
+
+
+    root.mainloop()

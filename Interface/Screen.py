@@ -30,4 +30,9 @@ class Screen:
 
     def add_object(self, input_object):
         self.objects.__add__(input_object)
+
+    def close_screen(self):
+        tk.
+
+
         
