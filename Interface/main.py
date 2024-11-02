@@ -1,7 +1,7 @@
 import tkinter as tk
 # only works on windows, need to change compatibility
 from ctypes import windll
-from os import path
+import Image_Cycler
 
 comp_dim = windll.user32.GetSystemMetrics
 
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     root.geometry(f"{int(comp_dim(0)/1.1)}x{int(comp_dim(1)/1.1)}")
 
     start_window()
-
-
+    Image_Cycler.select_folder()
+    Image_Cycler.get_images()
 
     root.mainloop()
