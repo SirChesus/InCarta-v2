@@ -15,10 +15,8 @@ def start_window():
 if __name__ == "__main__":
     root = tk.Tk()
     # creating the geometry based on the dimensions of the persons computer
-    root.geometry(f"{int(comp_dim(0)/1.1)}x{int(comp_dim(1)/1.1)}")
+    #root.geometry(f"{int(comp_dim(0)/1.1)}x{int(comp_dim(1)/1.1)}")
+    root.geometry(f"{int(comp_dim(0)/1.02)}x{int(comp_dim(1)/1.02)}")
 
-    start_window()
-    Image_Cycler.select_folder()
-    Image_Cycler.get_images()
-
+    Image_Cycler.start_image_cycler_scene(root)
     root.mainloop()
