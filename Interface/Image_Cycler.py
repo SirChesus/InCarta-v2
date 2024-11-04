@@ -10,11 +10,11 @@ import image_loader
 
 
 folder_selected = "-1"
-png_list = [""]
+png_list = []
 image_selected_idx = 0
-path_of_image = ""
-file_index_text = ""
-file_shown = ""
+path_of_image: StringVar
+file_index_text: StringVar
+image_label: image_loader.ImageLabel
 
 # allows the user to select a folder, does not return the path, instead changes folder_selected variable for the image cycler
 def select_folder():
@@ -68,11 +68,15 @@ def change_image_selected(direction=True, num_steps=1):
         image_selected_idx += num_steps
         path_of_image.set(f"image selected: {png_list[image_selected_idx]}")
         file_index_text.set(f"img number on {str(image_selected_idx)} out of {str(len(png_list)-1)}")
+        print(f"folder selected: {folder_selected}/{png_list[image_selected_idx]}")
+        image_label.change_image(f"{folder_selected}/{png_list[image_selected_idx]}")
+
     else:
         utils.info_box(f"image steps were out of boundaries, image_selects: {image_selected_idx}, Direction: {direction}, numSteps: {num_steps}")
 
 def start_image_cycler_scene(window: Tk):
-    global path_of_image, file_index_text, file_shown
+    global path_of_image, file_index_text, image_label
+
     path_of_image = StringVar()
     file_index_text = StringVar()
 
@@ -100,7 +104,7 @@ def start_image_cycler_scene(window: Tk):
 
     image_label = image_loader.ImageLabel(
         window, f"{path.dirname(getcwd())}/place_holder.png",
-        button_locations[0], y=button_locations[1]-int(button_space*2.5)
+        x=button_locations[0], y=button_locations[1]-int(button_space*2.5)
     )
 
 

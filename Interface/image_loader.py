@@ -26,10 +26,10 @@ class ImageLabel:
         self.label = Label(window, image=images.get(self.key))
         self.label.place(x=x, y=y)
 
-    def change_image(self, new_image_path):
+    def change_image(self, new_image_path, dimensions: tuple = (100, 100)):
         global images
         try:
-            images[self.key] = ImageTk.PhotoImage(opened_image = Image.open(new_image_path))
+            images[self.key] = ImageTk.PhotoImage(Image.open(new_image_path).resize(dimensions))
             self.label.config(image=images.get(self.key))
         except:
             utils.info_box("error opening image")
