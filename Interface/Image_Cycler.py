@@ -1,10 +1,12 @@
-from tkinter import filedialog
-from tkinter import PhotoImage
+from tkinter import filedialog, PhotoImage
+from tkinter import PhotoImage as photo
 from tkinter import *
 from tkinter.ttk import *
+import tkinter.ttk as ttk
 from os import path, listdir, getcwd
 import UI_Utils as utils
 from PIL import Image, ImageTk
+import image_loader
 
 
 folder_selected = "-1"
@@ -12,11 +14,13 @@ png_list = [""]
 image_selected_idx = 0
 path_of_image = ""
 file_index_text = ""
+file_shown = ""
 
 # allows the user to select a folder, does not return the path, instead changes folder_selected variable for the image cycler
 def select_folder():
     global folder_selected
     folder_selected = filedialog.askdirectory()
+
 
 # sets png_list with all the pngs in the selected folder
 def get_images():
@@ -64,12 +68,11 @@ def change_image_selected(direction=True, num_steps=1):
         image_selected_idx += num_steps
         path_of_image.set(f"image selected: {png_list[image_selected_idx]}")
         file_index_text.set(f"img number on {str(image_selected_idx)} out of {str(len(png_list)-1)}")
-
     else:
         utils.info_box(f"image steps were out of boundaries, image_selects: {image_selected_idx}, Direction: {direction}, numSteps: {num_steps}")
 
 def start_image_cycler_scene(window: Tk):
-    global path_of_image, file_index_text
+    global path_of_image, file_index_text, file_shown
     path_of_image = StringVar()
     file_index_text = StringVar()
 
@@ -95,12 +98,10 @@ def start_image_cycler_scene(window: Tk):
     file_index_label = Label(window, textvariable=file_index_text, font=('Arial', 16))
     file_index_label.place(x=button_locations[0], y=button_locations[1]-button_space)
 
-    image_selected = Image.open(f"{path.dirname(getcwd())}\place_holder.png").resize((100, 100))
-    file_shown = ImageTk.PhotoImage(image_selected)
-    print(f"{path.dirname(getcwd())}\place_holder.png")
-    image_label = Label(window, image=file_shown)
-    #image_label.place(x=button_locations[0], y=button_locations[1]-int(button_space*1.5))
-    image_label.place(x=10, y=10)
+    image_label = image_loader.ImageLabel(
+        window, f"{path.dirname(getcwd())}/place_holder.png",
+        button_locations[0], y=button_locations[1]-int(button_space*2.5)
+    )
 
 
 
