@@ -8,6 +8,38 @@ import UI_Utils as utils
 from PIL import Image, ImageTk
 import image_loader
 
+# object that stores the path, the photo image, the string var
+class ImageObject:
+    photo_image: PhotoImage
+    full_path: str
+    image_name: StringVar
+    key: int
+
+
+    def update_image_name(self):
+        if path.exists(self.full_path):
+            if self.full_path.endswith(".png"):
+                split_path = self.full_path.split("//")
+                print(split_path)
+                self.image_name.set(split_path[len(split_path)-1])
+            else:
+                utils.info_box(f"image is not a png {self.full_path}")
+        else:
+            utils.info_box(f"path doest not exist for creating image w/ path {self.full_path}")
+
+    def set_path(self, input_path):
+        if path.exists(self.full_path):
+            if self.full_path.endswith(".png"):
+                self.full_path = input_path
+
+    def __init__(self, full_path_to: str, width: int, height: int):
+
+
+
+class ImageCycler:
+    folder_selected: int
+    png_list = []
+
 
 folder_selected = "-1"
 png_list = []
@@ -39,7 +71,9 @@ def get_images():
         # start on first image
         image_selected_idx = 0
 
-        path_of_image.set(png_list[image_selected_idx])
+        path_of_image.set(f"image selected: {png_list[image_selected_idx]}")
+        file_index_text.set(f"img number on {str(image_selected_idx)} out of {str(len(png_list) - 1)}")
+        image_label.change_image(f"{folder_selected}/{png_list[image_selected_idx]}")
 
     # if no folder selected ask the user if they wanted to select a folder, if yes repeat, if no stop
     else:
@@ -68,7 +102,6 @@ def change_image_selected(direction=True, num_steps=1):
         image_selected_idx += num_steps
         path_of_image.set(f"image selected: {png_list[image_selected_idx]}")
         file_index_text.set(f"img number on {str(image_selected_idx)} out of {str(len(png_list)-1)}")
-        print(f"folder selected: {folder_selected}/{png_list[image_selected_idx]}")
         image_label.change_image(f"{folder_selected}/{png_list[image_selected_idx]}")
 
     else:
@@ -80,13 +113,14 @@ def start_image_cycler_scene(window: Tk):
     path_of_image = StringVar()
     file_index_text = StringVar()
 
+    #creating these variables, numbers are kind of random, and the purpose is to have less total calculation
     dimensions = [int(window.winfo_screenwidth()/1.02), int(window.winfo_screenheight()/1.02)]
-
     button_space = int(dimensions[0]/20) + 20
-
     button_locations = [int(dimensions[0]/40), int(dimensions[1] - int(dimensions[1]/8))]
 
     window.configure(bg='gray')
+
+    # Button creation
     move_right = Button(window, text="next", command=change_image_selected)
     move_right.place(x=button_locations[0], y=button_locations[1])
 
@@ -96,16 +130,27 @@ def start_image_cycler_scene(window: Tk):
     choose_dir = Button(window, text="choose directory", command=lambda: (select_folder(), get_images()))
     choose_dir.place(x=button_locations[0] + button_space*2, y=button_locations[1])
 
+    # putting labels w/ file name and what index
     file_path_label = Label(window, textvariable=path_of_image, font=('Arial', 16))
     file_path_label.place(x=button_locations[0], y=button_locations[1]-int(button_space/2))
 
     file_index_label = Label(window, textvariable=file_index_text, font=('Arial', 16))
     file_index_label.place(x=button_locations[0], y=button_locations[1]-button_space)
 
+    # creating the image to be displayed
     image_label = image_loader.ImageLabel(
         window, f"{path.dirname(getcwd())}/place_holder.png",
         x=button_locations[0], y=button_locations[1]-int(button_space*2.5)
     )
+
+# purpose is to make it more compact, makes an image w/ the name underneath
+def create_image_and_label(window, image_path, x, y):
+    image = image_loader.ImageLabel(
+        window, image_path, x, y
+    )
+    label = Label(text=image_path.split())
+
+
 
 
 
