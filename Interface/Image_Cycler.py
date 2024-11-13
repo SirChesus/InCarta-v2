@@ -13,26 +13,30 @@ class ImageObject:
     photo_image: PhotoImage
     full_path: str
     image_name: StringVar
+    # key is used to relate where the object is in the dictionary in object loader
     key: int
 
-
     def update_image_name(self):
-        if path.exists(self.full_path):
-            if self.full_path.endswith(".png"):
-                split_path = self.full_path.split("//")
-                print(split_path)
-                self.image_name.set(split_path[len(split_path)-1])
-            else:
-                utils.info_box(f"image is not a png {self.full_path}")
+        if utils.check_valid_image_path(self.full_path):
+            self.image_name.set(self.full_path)
         else:
-            utils.info_box(f"path doest not exist for creating image w/ path {self.full_path}")
+            utils.info_box("cannot update name bc of improper path")
 
     def set_path(self, input_path):
-        if path.exists(self.full_path):
-            if self.full_path.endswith(".png"):
-                self.full_path = input_path
+        if utils.check_valid_image_path(input_path):
+            self.full_path = input_path
+            return True
+        else:
+            utils.info_box("cannot set path bc of improper input path")
+            return False
 
-    def __init__(self, full_path_to: str, width: int, height: int):
+    def __init__(self, full_path_to: str, x: int, y: int, width: int = 100, height: int = 100):
+        # checks if path is valid, if so set the image and name
+        if self.set_path(full_path_to):
+            self.photo_image = ImageTk.PhotoImage(Image.open(full_path_to).resize((width, height)))
+            photo.
+
+
 
 
 
