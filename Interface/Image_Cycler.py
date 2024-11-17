@@ -18,7 +18,9 @@ class ImageObject:
 
     def update_image_name(self):
         if utils.check_valid_image_path(self.full_path):
-            self.image_name.set(self.full_path)
+            # creating a temp array that has all parts of the path
+            temp_path = self.full_path.split("/")
+            self.image_name.set(temp_path[len(temp_path)-1])
         else:
             utils.info_box("cannot update name bc of improper path")
 
@@ -30,12 +32,17 @@ class ImageObject:
             utils.info_box("cannot set path bc of improper input path")
             return False
 
-    def __init__(self, full_path_to: str, x: int, y: int, width: int = 100, height: int = 100):
+    def __init__(self, full_path_to: str, x: int, y: int, window: Tk, width: int = 100, height: int = 100):
         # checks if path is valid, if so set the image and name
         if self.set_path(full_path_to):
+            # creating the photo image
             self.photo_image = ImageTk.PhotoImage(Image.open(full_path_to).resize((width, height)))
-            photo.
+            self.full_path = full_path_to
+            self.image_name = StringVar()
+            # updating image from the path
+            self.update_image_name()
 
+            self.image_label = image_loader.ImageLabel(window, full_path_to, x, y)
 
 
 
@@ -146,6 +153,8 @@ def start_image_cycler_scene(window: Tk):
         window, f"{path.dirname(getcwd())}/place_holder.png",
         x=button_locations[0], y=button_locations[1]-int(button_space*2.5)
     )
+
+    test_image = ImageObject(f"{path.dirname(getcwd())}/place_holder.png", 400, 50, window)
 
 # purpose is to make it more compact, makes an image w/ the name underneath
 def create_image_and_label(window, image_path, x, y):

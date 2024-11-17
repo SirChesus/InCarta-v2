@@ -17,20 +17,25 @@ from utils import (
 learning_rate = 5e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 75
-NUM_EPOCHS = 5
+NUM_EPOCHS = 10
 NUM_WORKERS = 2
 IMAGE_HEIGHT = 100
 IMAGE_WIDTH = 100
 PIN_MEMORY = True
 LOAD_MODEL = False
-#TRAIN_IMG_DIR = "../shape_images/images/train"
-TRAIN_IMG_DIR = "../Unused_Training_Images/Lung_Images/train_images"
-#TRAIN_MASK_DIR = "../shape_images/masks/train"
-TRAIN_MASK_DIR = "../Unused_Training_Images/Lung_Images/train_masks"
-#VAL_IMG_DIR = "../shape_images/images/test"
-VAL_IMG_DIR = "../Unused_Training_Images/Lung_Images/validation_images"
-#VAL_MASK_DIR = "../shape_images/masks/test"
-VAL_MASK_DIR = "../Unused_Training_Images/Lung_Images/validation_masks"
+# some problem is happening with the paths where local paths aren't working
+TRAIN_IMG_DIR = "../shape_images/images/train"
+#TRAIN_IMG_DIR = "../Unused_Training_Images/Lung_Images/train_images"
+TRAIN_IMG_DIR = r"C:\Users\Test0\PycharmProjects\InCartaUNet-v2\shape_images\images\train"
+TRAIN_MASK_DIR = "../shape_images/masks/train"
+#TRAIN_MASK_DIR = "../Unused_Training_Images/Lung_Images/train_masks"
+TRAIN_MASK_DIR = r"C:\Users\Test0\PycharmProjects\InCartaUNet-v2\shape_images\masks\train"
+VAL_IMG_DIR = "../shape_images/images/test"
+VAL_IMG_DIR = r"C:\Users\Test0\PycharmProjects\InCartaUNet-v2\shape_images\images\test"
+#VAL_IMG_DIR = "../Unused_Training_Images/Lung_Images/validation_images"
+VAL_MASK_DIR = "../shape_images/masks/test"
+VAL_MASK_DIR = r"C:\Users\Test0\PycharmProjects\InCartaUNet-v2\shape_images\masks\test"
+#VAL_MASK_DIR = "../Unused_Training_Images/Lung_Images/validation_masks"
 
 
 # trains for one epoch, edit later to add more options if I want
