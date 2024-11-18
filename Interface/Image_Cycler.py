@@ -8,22 +8,27 @@ import UI_Utils as utils
 from PIL import Image, ImageTk
 import image_loader
 
-# object that stores the path, the photo image, the string var
+# creates an image, a label for it that has the name
 class ImageObject:
     photo_image: PhotoImage
     full_path: str
     image_name: StringVar
-    # key is used to relate where the object is in the dictionary in object loader
-    key: int
+    image_label: image_loader.ImageLabel
+    caption_label: Label
 
+    # updates the name based on the path, takes in no parameters
     def update_image_name(self):
         if utils.check_valid_image_path(self.full_path):
             # creating a temp array that has all parts of the path
-            temp_path = self.full_path.split("/")
+            temp_path = path.split(self.full_path)
             self.image_name.set(temp_path[len(temp_path)-1])
+            # cuts off names when they get too long
+            if len(self.image_name.get()) > 20:
+                self.image_name.set(self.image_name.get()[:20])
         else:
             utils.info_box("cannot update name bc of improper path")
 
+    # sets the path depending on the inputted full path
     def set_path(self, input_path):
         if utils.check_valid_image_path(input_path):
             self.full_path = input_path
@@ -31,6 +36,16 @@ class ImageObject:
         else:
             utils.info_box("cannot set path bc of improper input path")
             return False
+
+    # changes the image based on the path
+    def change_image(self):
+        self.image_label.change_image(self.full_path)
+
+    # just for ease of use
+    def update_with_path(self, input_path: str):
+        if self.set_path(input_path):
+            self.update_image_name()
+            self.change_image()
 
     def __init__(self, full_path_to: str, x: int, y: int, window: Tk, width: int = 100, height: int = 100):
         # checks if path is valid, if so set the image and name
@@ -41,15 +56,17 @@ class ImageObject:
             self.image_name = StringVar()
             # updating image from the path
             self.update_image_name()
-
             self.image_label = image_loader.ImageLabel(window, full_path_to, x, y)
-
-
+            self.caption_label = Label(window, textvariable=self.image_name, font=('Arial', 16))
+            self.caption_label.place(x=x, y=y+125)
 
 
 class ImageCycler:
-    folder_selected: int
-    png_list = []
+    folder_selected: str
+    image_selected_idx: int
+    
+
+
 
 
 folder_selected = "-1"
@@ -155,6 +172,9 @@ def start_image_cycler_scene(window: Tk):
     )
 
     test_image = ImageObject(f"{path.dirname(getcwd())}/place_holder.png", 400, 50, window)
+    b = Button(window, text="testing", command=lambda: test_image.update_with_path(r'C:\Users\Test0\PycharmProjects\InCartaUNet-v2\Unused_Training_Images\SegTrackv2\GroundTruth\bird_of_paradise\bird_of_paradise_00021.png'))
+    b.place(x=500, y=500)
+
 
 # purpose is to make it more compact, makes an image w/ the name underneath
 def create_image_and_label(window, image_path, x, y):
