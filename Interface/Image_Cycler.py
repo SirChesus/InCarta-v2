@@ -64,8 +64,31 @@ class ImageObject:
 class ImageCycler:
     folder_selected: str
     image_selected_idx: int
-    
+    path_list: [str]
 
+    # selects a folder and if invalid gives user the chance to fix it
+    def select_folder(self):
+        self.folder_selected = filedialog.askdirectory()
+        # error detection
+        if not path.isdir(folder_selected):
+            utils.ask_yes_no(f"selected folder is not a valid directory, do you want to open another?"
+                             f" {self.folder_selected}", select_folder(), lambda: utils.info_box("No folder selected"))
+
+    def get_images(self):
+        if path.isdir(folder_selected):
+            self.path_list.clear()
+            # loops through all files and adds any pngs it finds
+            for x in listdir(folder_selected):
+                # hate this many nested if statements
+                if x.lower().endswith('.png'):
+                    png_list.append(x)
+
+            # start on first image
+            self.image_selected_idx = 0
+
+        else:
+            message = f"ERROR: No Folder Selected, instead {folder_selected}. Do you want to select a folder again?"
+            utils.ask_yes_no(message, lambda: (select_folder(), get_images()), lambda: utils.info_box("No Folder Was Selected"))
 
 
 
