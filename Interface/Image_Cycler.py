@@ -63,6 +63,24 @@ class ImageCycler:
             utils.info_box(
                 f"image steps were out of boundaries, image_selects: {self.image_selected_idx}, Direction: {direction}, numSteps: {num_steps}")
 
+    def change_image_selected(self, image_obj, direction=True, num_steps=1):
+        # checks if the direction is false, if so flip num steps
+        if not direction:
+            num_steps *= -1
+
+        # check if within bounds
+        if 0 <= self.image_selected_idx + num_steps < len(self.path_list):
+            self.image_selected_idx += num_steps
+            # checks if it is a valid image Object, can't do it in parameters bc
+            if type(image_obj) is ImageObject:
+                image_obj.update_with_cycler(self)
+
+
+
+        else:
+            utils.info_box(
+                f"image steps were out of boundaries, image_selects: {self.image_selected_idx}, Direction: {direction}, numSteps: {num_steps}")
+
     def __init__(self):
         self.select_folder()
         if path.isdir(self.folder_selected):
@@ -203,40 +221,8 @@ def start_image_cycler_scene(window: Tk):
 
     image_cycler = ImageCycler()
 
-    #creating these variables, numbers are kind of random, and the purpose is to have less total calculation
-    dimensions = [int(window.winfo_screenwidth()/1.02), int(window.winfo_screenheight()/1.02)]
-    button_space = int(dimensions[0]/20) + 20
-    button_locations = [int(dimensions[0]/40), int(dimensions[1] - int(dimensions[1]/8))]
-
-    window.configure(bg='gray')
-
-    # Button creation
-    move_right = Button(window, text="next", command=change_image_selected)
-    move_right.place(x=button_locations[0], y=button_locations[1])
-
-    move_left = Button(window, text="previous", command=lambda: change_image_selected(False))
-    move_left.place(x=button_locations[0] + button_space, y=button_locations[1])
-
-    choose_dir = Button(window, text="choose directory", command=lambda: (select_folder(), get_images()))
-    choose_dir.place(x=button_locations[0] + button_space*2, y=button_locations[1])
-
-    # putting labels w/ file name and what index
-    file_path_label = Label(window, textvariable=path_of_image, font=('Arial', 16))
-    file_path_label.place(x=button_locations[0], y=button_locations[1]-int(button_space/2))
-
-    file_index_label = Label(window, textvariable=file_index_text, font=('Arial', 16))
-    file_index_label.place(x=button_locations[0], y=button_locations[1]-button_space)
-
-    # creating the image to be displayed
-    image_label = image_loader.ImageLabel(
-        window, f"{path.dirname(getcwd())}/place_holder.png",
-        x=button_locations[0], y=button_locations[1]-int(button_space*2.5)
-    )
-
-    test_image = ImageObject(f"{path.dirname(getcwd())}/place_holder.png", 400, 50, window)
-    b = Button(window, text="testing",
-               #command=lambda: (image_cycler.change_image_selected(), test_image.update_with_path(image_cycler.get_selected_image_path())))
-                command=lambda: test_image.update_with_cycler(image_cycler))
+    test_image = ImageObject(f"{path.dirname(getcwd())}/place_holder.png", 100, 500, window)
+    b = Button(window, text="forward", command=lambda: image_cycler.change_image_selected(test_image))
     b.place(x=500, y=500)
 
 
