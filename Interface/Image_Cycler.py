@@ -1,3 +1,4 @@
+import os
 from tkinter import filedialog, PhotoImage
 from tkinter import PhotoImage as photo
 from tkinter import *
@@ -7,6 +8,67 @@ from os import path, listdir, getcwd
 import UI_Utils as utils
 from PIL import Image, ImageTk
 import image_loader
+
+class ImageCycler:
+    folder_selected: str
+    image_selected_idx: int
+    path_list = [""]
+
+    # returns a path from the selected idx
+    def get_selected_image_path(self):
+        if 0 <= self.image_selected_idx < len(self.path_list):
+            if self.path_list[self.image_selected_idx].endswith('.png'):
+                return self.path_list[self.image_selected_idx]
+            else:
+                utils.info_box(f"Error with image selection, file is not a png {self.path_list[image_selected_idx]}")
+        else:
+            utils.info_box(
+                f"Error with image selection, outside of range img sel:{self.image_selected_idx}, len of images {self.path_list}")
+
+    # selects a folder and if invalid gives user the chance to fix it
+    def select_folder(self):
+        self.folder_selected = filedialog.askdirectory()
+        # error detection
+        if not path.isdir(self.folder_selected):
+            utils.ask_yes_no(f"selected folder is not a valid directory, do you want to open another?"
+                             f" {self.folder_selected}", self.select_folder, lambda: utils.info_box("No folder selected"))
+
+    def get_images(self):
+        if path.isdir(self.folder_selected):
+            self.path_list.clear()
+            # loops through all files and adds any pngs it finds
+            for x in listdir(self.folder_selected):
+                # hate this many nested if statements
+                if x.lower().endswith('.png'):
+                    self.path_list.append(f"{self.folder_selected}/{x}")
+
+            # start on first image
+            self.image_selected_idx = 0
+
+        else:
+            message = f"ERROR: No Folder Selected, instead {folder_selected}. Do you want to select a folder again?"
+            utils.ask_yes_no(message, lambda: (self.select_folder(), self.get_images()), lambda: utils.info_box("No Folder Was Selected"))
+
+    # changes the index
+    def change_image_selected(self, direction=True, num_steps=1):
+        # checks if the direction is false, if so flip num steps
+        if not direction:
+            num_steps *= -1
+
+        # check if within bounds
+        if 0 <= self.image_selected_idx + num_steps < len(self.path_list):
+            self.image_selected_idx += num_steps
+
+        else:
+            utils.info_box(
+                f"image steps were out of boundaries, image_selects: {self.image_selected_idx}, Direction: {direction}, numSteps: {num_steps}")
+
+    def __init__(self):
+        self.select_folder()
+        if path.isdir(self.folder_selected):
+            self.get_images()
+        print(f"{self.folder_selected}-{self.path_list}")
+
 
 # creates an image, a label for it that has the name
 class ImageObject:
@@ -23,8 +85,8 @@ class ImageObject:
             temp_path = path.split(self.full_path)
             self.image_name.set(temp_path[len(temp_path)-1])
             # cuts off names when they get too long
-            if len(self.image_name.get()) > 20:
-                self.image_name.set(self.image_name.get()[:20])
+            if len(self.image_name.get()) > 30:
+                self.image_name.set(self.image_name.get()[:30])
         else:
             utils.info_box("cannot update name bc of improper path")
 
@@ -44,8 +106,12 @@ class ImageObject:
     # just for ease of use
     def update_with_path(self, input_path: str):
         if self.set_path(input_path):
+            os.getcwd()
             self.update_image_name()
             self.change_image()
+
+    def update_with_cycler(self, cyc: ImageCycler):
+        self.update_with_path(cyc.get_selected_image_path())
 
     def __init__(self, full_path_to: str, x: int, y: int, window: Tk, width: int = 100, height: int = 100):
         # checks if path is valid, if so set the image and name
@@ -60,35 +126,6 @@ class ImageObject:
             self.caption_label = Label(window, textvariable=self.image_name, font=('Arial', 16))
             self.caption_label.place(x=x, y=y+125)
 
-
-class ImageCycler:
-    folder_selected: str
-    image_selected_idx: int
-    path_list: [str]
-
-    # selects a folder and if invalid gives user the chance to fix it
-    def select_folder(self):
-        self.folder_selected = filedialog.askdirectory()
-        # error detection
-        if not path.isdir(folder_selected):
-            utils.ask_yes_no(f"selected folder is not a valid directory, do you want to open another?"
-                             f" {self.folder_selected}", select_folder(), lambda: utils.info_box("No folder selected"))
-
-    def get_images(self):
-        if path.isdir(folder_selected):
-            self.path_list.clear()
-            # loops through all files and adds any pngs it finds
-            for x in listdir(folder_selected):
-                # hate this many nested if statements
-                if x.lower().endswith('.png'):
-                    png_list.append(x)
-
-            # start on first image
-            self.image_selected_idx = 0
-
-        else:
-            message = f"ERROR: No Folder Selected, instead {folder_selected}. Do you want to select a folder again?"
-            utils.ask_yes_no(message, lambda: (select_folder(), get_images()), lambda: utils.info_box("No Folder Was Selected"))
 
 
 
@@ -164,6 +201,8 @@ def start_image_cycler_scene(window: Tk):
     path_of_image = StringVar()
     file_index_text = StringVar()
 
+    image_cycler = ImageCycler()
+
     #creating these variables, numbers are kind of random, and the purpose is to have less total calculation
     dimensions = [int(window.winfo_screenwidth()/1.02), int(window.winfo_screenheight()/1.02)]
     button_space = int(dimensions[0]/20) + 20
@@ -195,7 +234,9 @@ def start_image_cycler_scene(window: Tk):
     )
 
     test_image = ImageObject(f"{path.dirname(getcwd())}/place_holder.png", 400, 50, window)
-    b = Button(window, text="testing", command=lambda: test_image.update_with_path(r'C:\Users\Test0\PycharmProjects\InCartaUNet-v2\Unused_Training_Images\SegTrackv2\GroundTruth\bird_of_paradise\bird_of_paradise_00021.png'))
+    b = Button(window, text="testing",
+               #command=lambda: (image_cycler.change_image_selected(), test_image.update_with_path(image_cycler.get_selected_image_path())))
+                command=lambda: test_image.update_with_cycler(image_cycler))
     b.place(x=500, y=500)
 
 
