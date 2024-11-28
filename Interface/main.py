@@ -15,11 +15,13 @@ def start_window():
 
 def start_image_cycler_scene(window: Tk):
     image_cycler = ImageCycler()
-    test_image = ImageObject(fr"{path.dirname(getcwd())}\place_holder.png", 100, 500, window)
-    b = tk.Button(window, text="forward", command=lambda: image_cycler.change_image_selected_image_obj(test_image))
+    test_image = ImageObject(fr"{path.dirname(getcwd())}\place_holder.png", 100, 200, window)
+    b = tk.Button(window, text="forward", command=lambda: image_cycler.change_image_selected_image_obj(test_image, size=(400, 400)))
     b.place(x=100, y=700)
-    c = tk.Button(window, text="backward", command=lambda: image_cycler.change_image_selected_image_obj(test_image, direction=False))
+    c = tk.Button(window, text="backward", command=lambda: image_cycler.change_image_selected_image_obj(test_image, size=(400, 400), direction=False))
     c.place(x=200, y=700)
+    select_folder = tk.Button(window, text="selected_folder", command=image_cycler.select_folder)
+    select_folder.place(x=300, y=700)
 
 
 
