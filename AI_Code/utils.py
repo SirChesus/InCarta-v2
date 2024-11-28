@@ -2,8 +2,9 @@ import torch
 import torchvision
 from dataset import CarvanaDataset
 from torch.utils.data import DataLoader
-from os import path
-from os import makedirs
+from os import makedirs, rmdir, path
+from shutil import rmtree
+
 
 import numpy as np
 
@@ -93,12 +94,19 @@ def check_accuracy(loader, model, device="cuda"):
 def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda", epoch=1):
     model.eval()
 
+    folder = f"{folder}/epoch_{epoch}"
+    # deleting the folder if there is one from a previous runtime
+    if path.exists(folder):
+        rmtree(folder)
+
     # making folder for the epoch
     if not path.exists(f"{folder}/epoch_{epoch}"):
-        makedirs(f"{folder}/epoch_{epoch}")
-
-    # setting folder to be the new path w/ the corresponding epoch
-    folder = f"{folder}/epoch_{epoch}"
+        # creating a folder for the epoch
+        makedirs(folder)
+        # creating folders within that folder for ground truths, og images, and preds
+        makedirs(folder + "/ground_truth")
+        makedirs(folder + "/original_images")
+        makedirs(folder + "/predictions")
 
     # for an index loop through images and masks of the loader
     for idx, (x, y) in enumerate(loader):
@@ -111,14 +119,12 @@ def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda
             preds = preds.float()
         # saving the prediction to the inputted folder
         torchvision.utils.save_image(
-            preds, f"{folder}/{idx} - pred_{epoch}.png"
+            preds, f"{folder}/predictions/{idx}.png"
         )
 
         # saving the original image.
-        torchvision.utils.save_image(y.unsqueeze(1), f"{folder}/ {idx} - ground_truth.png")
-        torchvision.utils.save_image(x, f"{folder}/ {idx} - og_image.png")
+        torchvision.utils.save_image(y.unsqueeze(1), f"{folder}/ground_truth/{idx}.png")
+        torchvision.utils.save_image(x, f"{folder}/original_images/{idx}.png")
 
-        overlayed_image = x + y.unsqueeze(1)
-        torchvision.utils.save_image(overlayed_image, f"{folder}/ {idx} - overlayed_image.png")
 
     model.train()

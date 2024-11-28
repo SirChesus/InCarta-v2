@@ -17,8 +17,9 @@ def start_image_cycler_scene(window: Tk):
     image_cycler = ImageCycler()
     test_image = ImageObject(fr"{path.dirname(getcwd())}\place_holder.png", 100, 500, window)
     b = tk.Button(window, text="forward", command=lambda: image_cycler.change_image_selected_image_obj(test_image))
-    b.place(x=500, y=500)
-
+    b.place(x=100, y=700)
+    c = tk.Button(window, text="backward", command=lambda: image_cycler.change_image_selected_image_obj(test_image, direction=False))
+    c.place(x=200, y=700)
 
 if __name__ == "__main__":
     root = tk.Tk()
