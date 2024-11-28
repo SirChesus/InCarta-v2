@@ -1,3 +1,4 @@
+import os.path
 from tkinter import filedialog
 from tkinter import *
 from tkinter.ttk import *
@@ -77,10 +78,15 @@ class ImageCycler:
             utils.info_box(
                 f"image steps were out of boundaries, image_selects: {self.image_selected_idx}, Direction: {direction}, numSteps: {num_steps}")
 
-    def __init__(self):
-        self.select_folder()
+    def __init__(self, inputted_path='none'):
+        # if more clarity is needed could make a seperate error statement for a non directory path
+        if inputted_path == 'none' or not path.isdir(inputted_path):
+            self.select_folder()
+        # setting the selected folder to the inputed one if it is a real folder
+        else:
+            self.folder_selected = inputted_path
+
         if path.isdir(self.folder_selected):
             self.get_images()
-
 
 

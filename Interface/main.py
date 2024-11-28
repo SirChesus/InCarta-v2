@@ -21,6 +21,8 @@ def start_image_cycler_scene(window: Tk):
     c = tk.Button(window, text="backward", command=lambda: image_cycler.change_image_selected_image_obj(test_image, direction=False))
     c.place(x=200, y=700)
 
+
+
 if __name__ == "__main__":
     root = tk.Tk()
     root.geometry(f"{int(comp_dim(0)/1.02)}x{int(comp_dim(1)/1.02)}")
