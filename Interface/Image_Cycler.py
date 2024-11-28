@@ -24,7 +24,6 @@ class ImageCycler:
     # selects a folder and if invalid gives user the chance to fix it
     def select_folder(self):
         self.folder_selected = filedialog.askdirectory()
-        print(self.folder_selected)
         # error detection
         if not path.isdir(self.folder_selected):
             utils.ask_yes_no(f"selected folder is not a valid directory, do you want to open another?"
