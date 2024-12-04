@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import Tk
 from image_loader import ImageObject, ImageCycler
-from os import path, getcwd
+from os import path, getcwd, listdir, walk
+from tkinter import filedialog
 # only works on windows, need to change compatibility
 from ctypes import windll
 
@@ -13,8 +14,14 @@ def change_size(event, window):
 def start_window():
     root.configure(bg='gray')
 
-def start_image_cycler_scene(window: Tk):
-    image_cycler = ImageCycler()
+def start_image_cycler_scene(window: Tk, main_directory=filedialog.askdirectory()):
+
+    for x in listdir(main_directory):
+        x = f"{main_directory}/{x}"
+        if path.isdir(x):
+           print(x)
+
+    image_cycler = ImageCycler(main_directory)
     test_image = ImageObject(fr"{path.dirname(getcwd())}\place_holder.png", 100, 200, window)
     b = tk.Button(window, text="forward", command=lambda: image_cycler.change_image_selected_image_obj(test_image, size=(400, 400)))
     b.place(x=100, y=700)
