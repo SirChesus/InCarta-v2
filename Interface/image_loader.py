@@ -6,11 +6,13 @@ from tkinter import Label
 from tkinter.ttk import *
 from tkinter import *
 from Image_Cycler import ImageCycler
-from os import path
+from os import path, getcwd
+
 
 images = []
 key_num = -1
 
+placeholder_img = fr"{path.dirname(getcwd())}\place_holder.png"
 
 class ImageLabel:
     label: Label

@@ -5,6 +5,10 @@ from tkinter.ttk import *
 from os import path, listdir, getcwd
 import UI_Utils as utils
 
+
+all_cyclers = []
+image_cyclers_imgs = []
+
 class ImageCycler:
     folder_selected: str
     image_selected_idx: int
@@ -81,6 +85,7 @@ class ImageCycler:
     def __init__(self, inputted_path='none'):
         # if more clarity is needed could make a seperate error statement for a non directory path
         if inputted_path == 'none' or not path.isdir(inputted_path):
+            print(inputted_path)
             self.select_folder()
         # setting the selected folder to the inputed one if it is a real folder
         else:
@@ -88,5 +93,4 @@ class ImageCycler:
 
         if path.isdir(self.folder_selected):
             self.get_images()
-
 
