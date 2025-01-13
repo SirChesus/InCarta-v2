@@ -42,36 +42,16 @@ def add_cycler_and_buttons(window: Tk, image_x: int, image_y: int, image_dimensi
     forward.place(x=image_x, y=image_y+image_dimension+100)
     backward.place(x=image_x + 60, y=image_y+image_dimension+100)
 
-
-
-
-
-
-def start_image_cycler_scene(window: Tk, main_directory=filedialog.askdirectory()):
-    # creating lists for all the different cyclers
-    all_cyclers = []
-    image_objects = []
-
-    for x in listdir(main_directory):
-        x = f"{main_directory}/{x}"
-        if path.isdir(x):
-            all_cyclers.append(ImageCycler(x))
-            image_objects.append(ImageObject(fr"{path.dirname(getcwd())}\place_holder.png", len(all_cyclers)*100, 200, window))
-
-    image_cycler = ImageCycler(main_directory)
-    test_image = ImageObject(fr"{path.dirname(getcwd())}\place_holder.png", 100, 200, window)
-    b = tk.Button(window, text="forward", command=lambda: image_cycler.change_image_selected_image_obj(test_image, size=(400, 400)))
-    b.place(x=100, y=700)
-    c = tk.Button(window, text="backward", command=lambda: image_cycler.change_image_selected_image_obj(test_image, size=(400, 400), direction=False))
-    c.place(x=200, y=700)
-    select_folder = tk.Button(window, text="selected_folder", command=lambda: (image_cycler.select_folder(), image_cycler.get_images()))
-    select_folder.place(x=300, y=700)
-
+def get_epoch_dirs(epoch: int = 1):
+    parent_dir = f"{path.dirname(getcwd())}/output_images/epoch_{epoch}"
+    all_dirs = [parent_dir + r"\\ground_truth", parent_dir + r"\\original_images", parent_dir + r"\\predictions"]
+    return all_dirs
 
 
 if __name__ == "__main__":
     root = tk.Tk()
+    epoch_dirs = get_epoch_dirs()
     root.geometry(f"{int(comp_dim(0)/1.02)}x{int(comp_dim(1)/1.02)}")
-    #start_image_cycler_scene(root)
-    add_cycler_and_buttons(root, 100, 200, 400)
+    print(epoch_dirs)
+    add_cycler_and_buttons(root, 100, 200, 400, directory=epoch_dirs[0])
     root.mainloop()
