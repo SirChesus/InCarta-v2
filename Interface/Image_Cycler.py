@@ -1,8 +1,5 @@
-import os.path
 from tkinter import filedialog
-from tkinter import *
-from tkinter.ttk import *
-from os import path, listdir, getcwd
+from os import path, listdir
 import UI_Utils as utils
 
 

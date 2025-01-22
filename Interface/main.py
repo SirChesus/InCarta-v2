@@ -15,6 +15,7 @@ def change_size(event, window):
 all_cyclers = []
 image_cycler_imgs = []
 all_buttons = []
+cycler_fxns_one = []
 
 def add_cycler_and_buttons(window: Tk, image_x: int, image_y: int, image_dimension=100, directory=filedialog.askdirectory()):
     num_cyclers = len(all_cyclers)
@@ -28,12 +29,14 @@ def add_cycler_and_buttons(window: Tk, image_x: int, image_y: int, image_dimensi
     attached_image = ImageObject(placeholder_img, image_x, image_y, window, width=image_dimension, height=image_dimension)
     image_cycler_imgs.append(attached_image)
 
-    # defining local function to make things more clear, removed in memory afterward anyway
+    # creating functions to be used for buttons, adding them to the list
     def move_image_forward():
         local_cycler.change_image_selected_image_obj(attached_image, size=(image_dimension, image_dimension))
+    cycler_fxns_one.append(move_image_forward)
 
     def move_image_backward():
         local_cycler.change_image_selected_image_obj(attached_image, False, size=(image_dimension, image_dimension))
+    cycler_fxns_one.append(move_image_backward)
 
     forward = tk.Button(window, text="Forward", command=move_image_forward)
     backward = tk.Button(window, text="Backward", command=move_image_backward)
@@ -53,5 +56,7 @@ if __name__ == "__main__":
     epoch_dirs = get_epoch_dirs()
     root.geometry(f"{int(comp_dim(0)/1.02)}x{int(comp_dim(1)/1.02)}")
     print(epoch_dirs)
-    add_cycler_and_buttons(root, 100, 200, 400, directory=epoch_dirs[0])
+    add_cycler_and_buttons(root, 100, 200, 400, epoch_dirs[0])
+    add_cycler_and_buttons(root, 550, 200, 400, epoch_dirs[1])
+    add_cycler_and_buttons(root, 1000, 200, 400, epoch_dirs[2])
     root.mainloop()
