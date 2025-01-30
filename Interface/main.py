@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import Tk
 from image_loader import ImageObject, ImageCycler, placeholder_img
 from os import path, getcwd, listdir, walk
+from Cycler_Manager import CyclerComponents
 from tkinter import filedialog
 # only works on windows, need to change compatibility
 from ctypes import windll
@@ -17,7 +18,8 @@ image_cycler_imgs = []
 all_buttons = []
 cycler_fxns_one = []
 
-def add_cycler_and_buttons(window: Tk, image_x: int, image_y: int, image_dimension=100, directory=filedialog.askdirectory()):
+def add_cycler_and_buttons(directory, window: Tk, image_x: int, image_y: int, image_dimension=100):
+    global all_cyclers, all_buttons
     num_cyclers = len(all_cyclers)
     num_buttons = len(all_buttons)
 
@@ -46,8 +48,8 @@ def add_cycler_and_buttons(window: Tk, image_x: int, image_y: int, image_dimensi
     backward.place(x=image_x + 60, y=image_y+image_dimension+100)
 
 def get_epoch_dirs(epoch: int = 1):
-    parent_dir = f"{path.dirname(getcwd())}/output_images/epoch_{epoch}"
-    all_dirs = [parent_dir + r"\\ground_truth", parent_dir + r"\\original_images", parent_dir + r"\\predictions"]
+    parent_dir = fr"{path.dirname(getcwd())}\output_images\epoch_{epoch}"
+    all_dirs = [parent_dir + r"\ground_truth", parent_dir + r"\original_images", parent_dir + r"\predictions"]
     return all_dirs
 
 
@@ -55,8 +57,13 @@ if __name__ == "__main__":
     root = tk.Tk()
     epoch_dirs = get_epoch_dirs()
     root.geometry(f"{int(comp_dim(0)/1.02)}x{int(comp_dim(1)/1.02)}")
-    print(epoch_dirs)
-    add_cycler_and_buttons(root, 100, 200, 400, epoch_dirs[0])
-    add_cycler_and_buttons(root, 550, 200, 400, epoch_dirs[1])
-    add_cycler_and_buttons(root, 1000, 200, 400, epoch_dirs[2])
+
+    print(f"all dirs {epoch_dirs}")
+    test_components = CyclerComponents(ImageCycler(epoch_dirs[1]), ImageObject(placeholder_img, 1000, 200, root), ["forward", "backward"], size=(400,400))
+    second_components = CyclerComponents(ImageCycler(epoch_dirs[2]), ImageObject(placeholder_img, 200, 200, root), ["forward", "backward"], size=(400,400))
+    test_components.image_cycler.get_images()
+    print(f"components 1: {test_components.image_cycler.folder_selected} \ncomponents 2: {second_components.image_cycler.folder_selected}")
+    print(f"1 {id(test_components.image_cycler.path_list)} \n2 {id(second_components.image_cycler.path_list)}")
+    #test_components.functions["forward"]()
+
     root.mainloop()

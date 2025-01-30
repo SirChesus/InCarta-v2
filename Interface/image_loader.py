@@ -19,7 +19,6 @@ class ImageLabel:
     key: int
 
     def __init__(self, window, path: str, x=0, y=0):
-        print(path)
         self.key = add_image(path)
         self.label = Label(window, image=images[self.key])
         self.label.place(x=x, y=y)
@@ -81,8 +80,6 @@ class ImageObject:
             self.change_image(size)
 
     def update_with_cycler(self, cyc: ImageCycler, size: tuple[int, int] = (100, 100)):
-        print(cyc.image_selected_idx)
-        print(cyc.get_selected_image_path())
         self.update_with_path(cyc.get_selected_image_path(), size)
 
     def __init__(self, full_path_to: str, x: int, y: int, window: Tk, width: int = 100, height: int = 100):

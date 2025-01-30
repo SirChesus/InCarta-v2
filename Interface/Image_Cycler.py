@@ -2,14 +2,23 @@ from tkinter import filedialog
 from os import path, listdir
 import UI_Utils as utils
 
-
-all_cyclers = []
-image_cyclers_imgs = []
-
 class ImageCycler:
-    folder_selected: str
-    image_selected_idx: int
-    path_list = [""]
+    def __init__(self, inputted_path='none'):
+        self.path_list = [""]
+        self.image_selected_idx = 0
+
+        # if more clarity is needed could make a separate error statement for a non directory path
+        if inputted_path == 'none' or not path.isdir(inputted_path):
+            print(f"Inputted incorrect path = {inputted_path}")
+            self.select_folder()
+        # setting the selected folder to the inputed one if it is a real folder
+        else:
+            print(f"Inputted path = {inputted_path}")
+            self.folder_selected = inputted_path
+
+        if path.isdir(self.folder_selected):
+            self.get_images()
+
 
     # returns a path from the selected idx
     def get_selected_image_path(self):
@@ -37,7 +46,7 @@ class ImageCycler:
             for x in listdir(self.folder_selected):
                 # hate this many nested if statements
                 if x.lower().endswith('.png'):
-                    self.path_list.append(f"{self.folder_selected}/{x}")
+                    self.path_list.append(fr"{self.folder_selected}\{x}")
 
             # start on first image
             self.image_selected_idx = 0
@@ -78,16 +87,4 @@ class ImageCycler:
         else:
             utils.info_box(
                 f"image steps were out of boundaries, image_selects: {self.image_selected_idx}, Direction: {direction}, numSteps: {num_steps}")
-
-    def __init__(self, inputted_path='none'):
-        # if more clarity is needed could make a seperate error statement for a non directory path
-        if inputted_path == 'none' or not path.isdir(inputted_path):
-            print(inputted_path)
-            self.select_folder()
-        # setting the selected folder to the inputed one if it is a real folder
-        else:
-            self.folder_selected = inputted_path
-
-        if path.isdir(self.folder_selected):
-            self.get_images()
 
